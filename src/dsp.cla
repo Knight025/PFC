@@ -1,0 +1,123 @@
+//#############################################################################
+// (Santi) Notas:
+//  'To disable the triggering of a task by a peripheral, the user must set the
+// DmaClaSrcSelRegs.CLA1TASKSRCSELx[TASKx] bit field to 0', page 578
+//
+// 'Only one task is serviced at a time; there is no nesting of tasks.', page 579
+//
+// En las memorias de acceso compartido, parece que existe un sistema de prioridad tipo
+// round-robin tanto para lecturas/escrituras de la CPU o de la CLA, como para
+// un intento simult√°neo de acceso de la CPU y de la CLA. Mas informacion en
+// la pag. 119
+//#############################################################################
+
+//*****************************************************************************
+// includes
+//*****************************************************************************
+#include "dsp_shared.h"
+
+
+//*****************************************************************************
+// defines
+//*****************************************************************************
+
+
+void sendFeedback(){
+	int i;
+	for (i = 0; i < SIGNAL_LENGTH_ABUFF; i++){
+		volt[i] = DACsamples[i];
+	}
+	for (i = 0; i < SIGNAL_LENGTH_BBUFF; i++){
+		volt2[i] = DACsamples[i + SIGNAL_LENGTH_ABUFF];
+	}
+}
+
+
+void saveSignal(){
+	int i;
+	for (i = 0; i < SIGNAL_LENGTH_ABUFF; i++){
+		signal[i] = signalBuff[i];
+		//volt[i] = signal[i];
+	}
+	for (i = 0; i < SIGNAL_LENGTH_BBUFF; i++){
+		signal[i + SIGNAL_LENGTH_ABUFF] = signalBuff2[i];
+		//volt[i + SIGNAL_LENGTH_ABUFF] = signal[i + SIGNAL_LENGTH_ABUFF];
+	}
+}
+
+
+
+__interrupt void Cla1Task1 ( void )
+{
+
+}
+
+__interrupt void Cla1Task2 ( void )
+{
+
+}
+
+__interrupt void Cla1Task3 ( void )
+{
+
+}
+
+__interrupt void Cla1Task4 ( void )
+{
+
+}
+
+__interrupt void Cla1Task5 ( void )
+{
+
+}
+
+__interrupt void Cla1Task6 ( void ) {
+	ack = 0;
+	if(feedbackReq){
+		sendFeedback();
+		ack = 1;
+	}
+	saveSignal();
+
+	// Prepare task7 variables for next stimulation signal
+	//pSignal = signalsIData + (nextSignalID-1)*SIGNAL_LENGTH;//Note: for now I use signal's ID the simple way
+	pSignal = signal;
+	pDACsamples = DACsamples;
+	endSignalCounter = SIGNAL_LENGTH;
+
+	// Restart EPWM1 and consequently ADC-CLA-DAC bucle
+	EPwm1Regs.TBCTR = 0x0000;
+	EPwm1Regs.TBCTL.bit.CTRMODE = TB_COUNT_UP;
+}
+
+__interrupt void Cla1Task7 ( void ) {
+	if(endSignalCounter--){
+		if(endSignalCounter < SIGNAL_LENGTH-1) //To delay ADC Samples 1 cycle
+			*pDACsamples++ = AdcaResultRegs.ADCRESULT0;
+		DacbRegs.DACVALS.all = *(pSignal++);
+
+		//if(endSignalCounter < SIGNAL_LENGTH-1){}
+		//*pDACsamples++ = AdcaResultRegs.ADCRESULT0;
+		//DacbRegs.DACVALS.all = *(pDACsamples-1);
+	}else{
+		*pDACsamples++ = AdcaResultRegs.ADCRESULT0;
+		DacbRegs.DACVALS.all = DAC_ZERO;
+		//Congelo el EPWM1 para deshabilitar el bucle ADC-CLA-DAC hasta el siguiente estÌmulo
+		//Nota: aunque intento reducir el cÛdigo a ejecutar de task7 para reducir el retardo, esta ramificaciÛn del cÛdigo
+		//no deberÌa ralentizar el bucle ADC-CLA-DAC (creo).
+		//Nota2: puedo dejar la seÒal en bucle continuo (pSignal = pSignal - SIGNAL_LENGTH) para tomar muestras de la
+		//impedancia de la piel
+		EPwm1Regs.TBCTL.bit.CTRMODE = TB_FREEZE;
+	}
+	AdcaRegs.ADCINTFLGCLR.bit.ADCINT1 = 1; //clear INT1 flag
+
+}
+
+__interrupt void Cla1Task8 ( void )
+{
+
+}
+
+// End of file
+
