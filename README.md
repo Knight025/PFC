@@ -1,6 +1,7 @@
 # PFC
-TMS320F28377F code for TENS applications with close-loop stabilization
+TMS320F28377F code for TENS applications with close-loop stabilization (TENS: Transcutaneous Electrical Nerve Stimulation)
 
+This code is only a basic software architecture made for TMS320F28377F whose objetive is to support various nerve-stimulation-signal adjustment algorythms using raw data from any kind of sensor (i.e. skin impedance).
 
 It is needed to include some libraries and compiler/linker configuration. To do so, follow these instructions:
 
