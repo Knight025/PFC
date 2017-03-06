@@ -2,7 +2,7 @@
 TMS320F28377F code for TENS applications with close-loop stabilization
 
 
-It is needed to include some libraries and compilation/link configuration. To do so, follow these instructions:
+It is needed to include some libraries and compiler/linker configuration. To do so, follow these instructions:
 
 1) Do as it is told in the document:
   - F2837xS Firmware Development Package
