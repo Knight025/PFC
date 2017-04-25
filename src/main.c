@@ -22,10 +22,6 @@
 //#pragma DATA_SECTION(answerDataBuff, "ramgs2");
 //uint16_t answerDataBuff[SIGNAL_LENGTH*MAX_ADC_SIGNALS];
 
-// Aux variables
-//bool waitSamples = 2;
-//uint16_t samplesCounter;
-
 //*****************************************************************************
 // Function prototypes
 //*****************************************************************************
@@ -68,7 +64,6 @@ void main(void){
 	//Init GPIO pins for ePWM1
 	//These functions are in the F2837xS_EPwm.c file
 	//InitEPwm1Gpio();
-
 	//LED_configure();
 
 	// (Santi) InitPieCtrl() includes DINT, so I removed this code line
@@ -125,7 +120,6 @@ void main(void){
 	interp_addcmd(signalRequest, "signalRequest: asks for 'ID' signal from CLA's RAM");
 	//interp_addcmd(ADCSamplesRequest, "ADCSamplesRequest: Sends last ADC samples buff (NOT IMPLEMENTED YET)");
 	interp_addcmd(signalReceived, "sendSignal: sends a stimulation signal to be saved on CLA's RAM, with an ID associated");
-
 
 	while(1){
 		while(receive_pkg() == 0) { };
@@ -198,8 +192,3 @@ int newPlayList(uint16_t* arg){
 
 	return 1;
 }
-
-
-
-
-
