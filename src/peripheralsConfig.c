@@ -58,24 +58,24 @@ void init_timers(void){
 	EDIS;    // This is needed to disable write to EALLOW protected registers
 	*/
 
-    // Step 4. Initialize the Device Peripheral. This function can be
-    //         found in F2837xS_CpuTimers.c
+	// Step 4. Initialize the Device Peripheral. This function can be
+	//         found in F2837xS_CpuTimers.c
 	InitCpuTimers();   // For this example, only initialize the Cpu Timers
 
-    // Configure CPU-Timer 0, 1, and 2 to interrupt every second:
-    // 200MHz CPU Freq, 1 second Period (in uSeconds)
-    ConfigCpuTimer(&CpuTimer0, 200, 2000);
+	// Configure CPU-Timer 0, 1, and 2 to interrupt every second:
+	// 200MHz CPU Freq, 1 second Period (in uSeconds)
+	ConfigCpuTimer(&CpuTimer0, 200, 2000);
 	#if DEBUG_LATENCY
-    ConfigCpuTimer(&CpuTimer1, 200, 1000000);
+		ConfigCpuTimer(&CpuTimer1, 200, 1000000);
 	#endif
-    //ConfigCpuTimer(&CpuTimer2, 200, 1000000);
+	//ConfigCpuTimer(&CpuTimer2, 200, 1000000);
 
-    // To ensure precise timing, use write-only instructions to write to the entire register. Therefore, if any
-    // of the configuration bits are changed in ConfigCpuTimer and InitCpuTimers (in F2837xS_cputimervars.h), the
-    // below settings must also be updated.
-    //CpuTimer0Regs.TCR.all = 0x4000; // Use write-only instruction to set TSS bit = 0
-    //CpuTimer1Regs.TCR.all = 0x4000; // Use write-only instruction to set TSS bit = 0;
-    //CpuTimer2Regs.TCR.all = 0x4000; // Use write-only instruction to set TSS bit = 0
+	// To ensure precise timing, use write-only instructions to write to the entire register. Therefore, if any
+	// of the configuration bits are changed in ConfigCpuTimer and InitCpuTimers (in F2837xS_cputimervars.h), the
+	// below settings must also be updated.
+	//CpuTimer0Regs.TCR.all = 0x4000; // Use write-only instruction to set TSS bit = 0
+	//CpuTimer1Regs.TCR.all = 0x4000; // Use write-only instruction to set TSS bit = 0;
+	//CpuTimer2Regs.TCR.all = 0x4000; // Use write-only instruction to set TSS bit = 0
 
 }
 
@@ -118,14 +118,14 @@ void InitEPwm1(){
 
 	// Set action
 	//EPwm1Regs.AQCTLA.bit.ZRO = AQ_SET;            // Set PWM1A on Zero
-    EPwm1Regs.AQCTLA.bit.CAU = AQ_SET;          	// Clear PWM1A on Zero
-    EPwm1Regs.AQCTLA.bit.PRD = AQ_CLEAR;
-    //EPwm1Regs.AQCTLB.bit.ZRO = AQ_SET;            // Set PWM1B on Zero
-    //EPwm1Regs.AQCTLB.bit.CBU = AQ_CLEAR;          // Clear PWM1B on event B, up count
+	EPwm1Regs.AQCTLA.bit.CAU = AQ_SET;          	// Clear PWM1A on Zero
+	EPwm1Regs.AQCTLA.bit.PRD = AQ_CLEAR;
+	//EPwm1Regs.AQCTLB.bit.ZRO = AQ_SET;            // Set PWM1B on Zero
+	//EPwm1Regs.AQCTLB.bit.CBU = AQ_CLEAR;          // Clear PWM1B on event B, up count
 
 
-    // Interrupt where we will change the Compare Values
-    EPwm1Regs.ETSEL.bit.SOCAEN = 1; 				//enable SOCA
+	// Interrupt where we will change the Compare Values
+	EPwm1Regs.ETSEL.bit.SOCAEN = 1; 				//enable SOCA
 	EPwm1Regs.ETSEL.bit.SOCASEL	= 4;	        	// Select SOC on up-count
 	EPwm1Regs.ETPS.bit.SOCAPRD = 1;		        	// Generate pulse on 1st event
 	//EPwm1Regs.ETSEL.bit.INTSEL = ET_CTR_ZERO;     // Select INT on Zero event
@@ -159,33 +159,33 @@ void InitEPwm2(){
 
 	// Set action
 	//EPwm2Regs.AQCTLA.bit.ZRO = AQ_SET;            // Set PWM2A on Zero
-    EPwm2Regs.AQCTLA.bit.CAU = AQ_SET;          	// Clear PWM2A on Zero
-    EPwm2Regs.AQCTLA.bit.PRD = AQ_CLEAR;
-    //EPwm2Regs.AQCTLB.bit.ZRO = AQ_SET;            // Set PWM2B on Zero
-    //EPwm2Regs.AQCTLB.bit.CBU = AQ_CLEAR;          // Clear PWM1B on event B, up count
+	EPwm2Regs.AQCTLA.bit.CAU = AQ_SET;          	// Clear PWM2A on Zero
+	EPwm2Regs.AQCTLA.bit.PRD = AQ_CLEAR;
+	//EPwm2Regs.AQCTLB.bit.ZRO = AQ_SET;            // Set PWM2B on Zero
+	//EPwm2Regs.AQCTLB.bit.CBU = AQ_CLEAR;          // Clear PWM1B on event B, up count
 
-    // Interrupt configuration (Santi: this seccion original purpose was to 'change the Compare Values')
-    //EPwm2Regs.ETSEL.bit.SOCAEN = 1; 				//enable SOCA
+	// Interrupt configuration (Santi: this seccion original purpose was to 'change the Compare Values')
+	//EPwm2Regs.ETSEL.bit.SOCAEN = 1; 				//enable SOCA
 	//EPwm2Regs.ETSEL.bit.SOCASEL = 4;	        	// Select SOC on up-count
 	//EPwm2Regs.ETPS.bit.SOCAPRD = 1;		        // Generate pulse on 1st event
 	EPwm2Regs.ETSEL.bit.INTSEL = ET_CTR_ZERO;    	// Select INT on -- (beware, review "ETSEL define". 5? 4? 1?)
 	EPwm2Regs.ETSEL.bit.INTEN = 1;            		// Enable INT
 	EPwm2Regs.ETPS.bit.INTPRD = ET_1ST;       		// Generate INT on 1st event
 
-    EDIS;
+	EDIS;
 }
 
 
 
 void ADC_initAdcA(void){
-//Configure the ADC and power it up
+	//Configure the ADC and power it up
 	uint16_t i;
 
 	EALLOW;
 	//write configurations
 	//AdcaRegs.ADCCTL2.bit.PRESCALE = 6; 		//set ADCCLK divider  (default: 6)
 	AdcaRegs.ADCCTL2.bit.PRESCALE = 1; 		//set ADCCLK divider  (default: 6)
-    AdcSetMode(ADC_ADCA, ADC_RESOLUTION_12BIT, ADC_SIGNALMODE_SINGLE);
+	AdcSetMode(ADC_ADCA, ADC_RESOLUTION_12BIT, ADC_SIGNALMODE_SINGLE);
 
 	//Set pulse positions to late
 	AdcaRegs.ADCCTL1.bit.INTPULSEPOS = 1;
@@ -198,16 +198,16 @@ void ADC_initAdcA(void){
 		asm("   RPT#255 || NOP");
 	}
 
-//Select the channels to convert and end of conversion flag ADCA
+	//Select the channels to convert and end of conversion flag ADCA
 	//Default (kept as an example)
-    //AdcaRegs.ADCSOC0CTL.bit.CHSEL = 0;  	//SOC0 will convert pin A0
-    //AdcaRegs.ADCSOC0CTL.bit.ACQPS = 99; 	//sample window is 100 SYSCLK cycles
-    //AdcaRegs.ADCSOC0CTL.bit.TRIGSEL = 5; 	//trigger on ePWM1 SOCA/C
-    //AdcaRegs.ADCINTSEL1N2.bit.INT1SEL = 0; 	//end of SOC0 will set INT1 flag
-    //AdcaRegs.ADCINTSEL1N2.bit.INT1E = 1;   	//enable INT1 flag
-    //AdcaRegs.ADCINTFLGCLR.bit.ADCINT1 = 1; 	//make sure INT1 flag is cleared
+	//AdcaRegs.ADCSOC0CTL.bit.CHSEL = 0;  	//SOC0 will convert pin A0
+	//AdcaRegs.ADCSOC0CTL.bit.ACQPS = 99; 	//sample window is 100 SYSCLK cycles
+	//AdcaRegs.ADCSOC0CTL.bit.TRIGSEL = 5; 	//trigger on ePWM1 SOCA/C
+	//AdcaRegs.ADCINTSEL1N2.bit.INT1SEL = 0; 	//end of SOC0 will set INT1 flag
+	//AdcaRegs.ADCINTSEL1N2.bit.INT1E = 1;   	//enable INT1 flag
+	//AdcaRegs.ADCINTFLGCLR.bit.ADCINT1 = 1; 	//make sure INT1 flag is cleared
 
-    AdcaRegs.ADCSOC0CTL.bit.CHSEL = 0;  	//SOC0 will convert pin A0
+	AdcaRegs.ADCSOC0CTL.bit.CHSEL = 0;  	//SOC0 will convert pin A0
 	AdcaRegs.ADCSOC0CTL.bit.ACQPS = 19; 	//sample window is 20 SYSCLK cycles (minimum 75 ns)
 	AdcaRegs.ADCSOC0CTL.bit.TRIGSEL = 5; 	//trigger on ePWM1 SOCA/C
 	AdcaRegs.ADCINTSEL1N2.bit.INT1SEL = 0; 	//end of SOC0 will set INT1 flag
