@@ -72,29 +72,29 @@ void main(void){
 	//LED_configure();
 
 	// (Santi) InitPieCtrl() includes DINT, so I removed this code line
-    //DINT;
+	//DINT;
 
 
-    InitPieCtrl();
+	InitPieCtrl();
 
-    IER = 0x0000;
-    IFR = 0x0000;
+	IER = 0x0000;
+	IFR = 0x0000;
+	
+	InitPieVectTable();
 
-    InitPieVectTable();
+	// Step 3. Init timers
+	init_timers();
 
-    // Step 3. Init timers
-    init_timers();
-
-    // Step 4. Configure the CLA memory spaces first followed by CLA's task vectors.
-    CLA_init_variables();
-    CLA_configClaMemory();
+	// Step 4. Configure the CLA memory spaces first followed by CLA's task vectors.
+	CLA_init_variables();
+	CLA_configClaMemory();
 	CLA_initCpu1Cla1();
 
 
 	// Step 5. Configure the ADC to start sampling, triggered by EPWM1 interruption
 	ADC_initAdcA();
 
-    // Step 6. (Santi) DAC Configuration
+	// Step 6. (Santi) DAC Configuration
 	initDAC();
 
 	// Step 7. Configure EPWM1 to trigger ADC
@@ -103,11 +103,11 @@ void main(void){
 
 
 	// Step 8. Enable global Interrupts and higher priority real-time debug events:
-    EINT;	// Enable Global interrupt INTM
-    ERTM;	// (Santi) Should I remove this line in FLASH code? (after debugging)
+	EINT;	// Enable Global interrupt INTM
+	ERTM;	// (Santi) Should I remove this line in FLASH code? (after debugging)
 
 
-    // Step 9. Turn on the EPWM1
+	// Step 9. Turn on the EPWM1
 	EALLOW;
 	CpuSysRegs.PCLKCR0.bit.TBCLKSYNC = 1;
 	EPwm1Regs.TBCTL.bit.CTRMODE = TB_COUNT_UP; //unfreeze, and enter up count mode
@@ -115,11 +115,11 @@ void main(void){
 
 
 	// Step 10. Init SCI
-    scia_init(BAUD_RATE);
+	scia_init(BAUD_RATE);
 
 
 	// Step 11. Add commands
-    interp_addcmd(newPlayList, "newPlayList: sends a new 'stimulation signal playList', event-based");
+	interp_addcmd(newPlayList, "newPlayList: sends a new 'stimulation signal playList', event-based");
 	interp_addcmd(stopStimulation, "stopStimulation: stops stimulation play list");
 	interp_addcmd(restartStimulation, "restartStimulation: restarts stimulation play list");
 	interp_addcmd(signalRequest, "signalRequest: asks for 'ID' signal from CLA's RAM");
